@@ -1,0 +1,23 @@
+{
+  "name": "365-mpps_6_simulated-latency",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/machineman1357/365-MPPs_6_Simulated-Latency.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/machineman1357/365-MPPs_6_Simulated-Latency/issues"
+  },
+  "homepage": "https://github.com/machineman1357/365-MPPs_6_Simulated-Latency#readme",
+  "dependencies": {
+    "express": "^4.17.2",
+    "socket.io": "^2.1.1"
+  }
+}

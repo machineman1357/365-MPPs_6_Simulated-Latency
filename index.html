@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+            integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+            crossorigin="anonymous"
+        />
+    </head>
+    <body>
+        <button id="increment" type="button" class="btn btn-primary">
+            Increment
+        </button>
+        <button id="decrement" type="button" class="btn btn-primary">
+            Decrement
+        </button>
+        <script src="/socket.io/socket.io.js"></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/redux/5.0.0-alpha.0/redux.min.js"
+            integrity="sha512-6WJ7yVV5HDZwZ0RT5CM3FCTgTt5qC5BlfQ9bG43y0BowT5a3GXQqDYaoZgCk+i9vuB1Yj6KdBPQAU8Ra7tV32w=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        ></script>
+        <script>
+            const socket = io();
+            const SIMULATED_LATENCY_MS = 1000;
+            let lastExecutedPacketId;
+            const latendedPackets = {};
+
+            subscribeMessage("message", (packetId) => {
+                if(lastDisplayedMessageId && packetId - 1 !== lastDisplayedMessageId) {
+                    console.log(`Messages out of order. id: ${packetId} last: ${lastDisplayedMessageId}`);
+                }
+                lastDisplayedMessageId = packetId;
+            });
+
+            function subscribeMessage(name, func) {
+                socket.on(name, (data) => {
+                    latendedPackets[data.packetId] = data;
+                    setInterval(() => {
+                        if(!lastExecutedPacketId) lastExecutedPacketId = data.packetId - 1;
+
+                        if(data.packetId - 1 === lastExecutedPacketId) {
+                            func(data);
+                        }
+                    }, SIMULATED_LATENCY_MS);
+                });
+            }
+
+            function counterReducer(state = { value: 0 }, action) {
+                switch (action.type) {
+                    case "counter/incremented":
+                        return { value: state.value + 1 };
+                    case "counter/decremented":
+                        return { value: state.value - 1 };
+                    default:
+                        return state;
+                }
+            }
+
+            const store = Redux.createStore(counterReducer);
+
+            store.subscribe(() => console.log(store.getState()));
+
+            document.querySelector("#increment").onclick = () =>
+                store.dispatch({ type: "counter/incremented" });
+            document.querySelector("#decrement").onclick = () =>
+                store.dispatch({ type: "counter/decremented" });
+        </script>
+    </body>
+</html>
