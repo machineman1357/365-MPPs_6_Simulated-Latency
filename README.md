@@ -4,6 +4,7 @@
 - redux
 - socket io
 - bootstrap
+- express
 
 ## Concepts
 - simulated latency
